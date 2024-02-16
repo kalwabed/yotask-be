@@ -36,23 +36,76 @@ export class UsersController {
 		return this.usersService.create(createUserDto);
 	}
 
+	@ApiOperation({
+		summary: 'Retrive list of users'
+	})
+	@ApiResponse({
+		description: 'List of available users.',
+		status: 200,
+		schema: {
+			example: [{
+				username: 'aaa',
+				email: 'mail@mail.com'
+			},
+{
+				username: 'bbbb',
+				email: 'mail@mul.com'
+			}
+]		}
+	})
 	@Get()
 	findAll() {
 		return this.usersService.findAll();
 	}
 
+	@ApiOperation({
+		summary: 'Retrive user by id'
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				username: 'aaa',
+				email: 'mail@mail.com'
+			},
+		}
+	})
 	@Get(":id")
 	findOne(@Param("id") id: string) {
 		return this.usersService.findOne(id);
 	}
 
+	@ApiOperation({
+		summary: 'Update user by id'
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				username: 'aaa',
+				email: 'mail@mail.com'
+			},
+		}
+	})
 	@Patch(":id")
 	update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
-		return this.usersService.update(+id, updateUserDto);
+		return this.usersService.update(id, updateUserDto);
 	}
 
+	@ApiOperation({
+		summary: 'Remove user by id'
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				status: 'ok'
+			},
+		}
+	})
 	@Delete(":id")
 	remove(@Param("id") id: string) {
-		return this.usersService.remove(+id);
+		this.usersService.remove(id);
+		return { status: 'ok' }
 	}
 }
