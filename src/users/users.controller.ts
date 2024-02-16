@@ -21,6 +21,7 @@ import { UsersService } from "./users.service";
 
 @ApiTags("Users")
 @ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller("users")
 export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
@@ -62,7 +63,6 @@ export class UsersController {
 			],
 		},
 	})
-	@UseGuards(JwtAuthGuard)
 	@Get()
 	findAll() {
 		return this.usersService.findAll();

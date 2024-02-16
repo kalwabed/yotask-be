@@ -1,5 +1,5 @@
-import { Controller, Get, Post, Request, UseGuards } from "@nestjs/common";
-import { ApiBody, ApiOperation } from "@nestjs/swagger";
+import { Body, Controller, Get, Post, Request, UseGuards } from "@nestjs/common";
+import { ApiBody, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { AppService } from "./app.service";
 import { AuthService } from "./auth/auth.service";
 import { LocalAuthGuard } from "./auth/local-auth.guard";
@@ -27,10 +27,42 @@ export class AppController {
 			},
 		},
 	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				access_token: 'xxx'
+			}
+		}
+	})
 	@UseGuards(LocalAuthGuard)
 	@Post("auth/login")
 	async login(@Request() req) {
-		console.log(req.user);
 		return this.authService.login(req.user._doc);
+	}
+
+	@ApiOperation({
+		summary: "User signup",
+	})
+	@ApiBody({
+		schema: {
+			example: {
+				username: "111",
+				email: "nomain@main.com",
+				password: "xxxx",
+			},
+		},
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				access_token: 'xxx'
+			}
+		}
+	})
+	@Post("auth/signup")
+	async register(@Body() data: { username: string; email: string; password: string }) {
+		return this.authService.register(data);
 	}
 }

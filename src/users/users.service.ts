@@ -5,6 +5,7 @@ import {
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
+import { hash } from 'argon2'
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./schemas/user.schema";
@@ -16,18 +17,20 @@ export class UsersService {
 	) {}
 
 	async create(data: CreateUserDto) {
-		const createdUser = await this.userModel.create(data);
+		const createdUser = await this.userModel.create({
+			...data,
+			password: await hash(data.password)
+		});
 		return createdUser;
 	}
 
 	async findAll() {
-		return await this.userModel.find().exec();
+		return await this.userModel.find({}, 'username email').exec()
 	}
 
 	async findOne(id: string) {
 		try {
-			const user = await this.userModel.findById(id);
-			return user;
+			return await this.userModel.findById(id);
 		} catch (err) {
 			throw new NotFoundException("User is not found!");
 		}
