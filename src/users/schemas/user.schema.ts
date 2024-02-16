@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
+import { HydratedDocument, Schema as mSchema } from "mongoose";
 
-export type CatDocument = HydratedDocument<User>;
+export type UserDocument = HydratedDocument<User>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class User {
 	@Prop()
 	username: string;
@@ -13,6 +13,9 @@ export class User {
 
 	@Prop()
 	password: string;
+
+	@Prop({ ref: "Task" })
+	tasks: mSchema.Types.ObjectId[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

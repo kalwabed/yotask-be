@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Post, Request, UseGuards } from "@nestjs/common";
+import {
+	Body,
+	Controller,
+	Get,
+	Post,
+	Request,
+	UseGuards,
+} from "@nestjs/common";
 import { ApiBody, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { AppService } from "./app.service";
 import { AuthService } from "./auth/auth.service";
@@ -31,9 +38,9 @@ export class AppController {
 		status: 200,
 		schema: {
 			example: {
-				access_token: 'xxx'
-			}
-		}
+				access_token: "xxx",
+			},
+		},
 	})
 	@UseGuards(LocalAuthGuard)
 	@Post("auth/login")
@@ -57,12 +64,14 @@ export class AppController {
 		status: 200,
 		schema: {
 			example: {
-				access_token: 'xxx'
-			}
-		}
+				access_token: "xxx",
+			},
+		},
 	})
 	@Post("auth/signup")
-	async register(@Body() data: { username: string; email: string; password: string }) {
+	async register(
+		@Body() data: { username: string; email: string; password: string },
+	) {
 		return this.authService.register(data);
 	}
 }

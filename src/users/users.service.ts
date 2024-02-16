@@ -4,8 +4,8 @@ import {
 	NotFoundException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
+import { hash } from "argon2";
 import { Model } from "mongoose";
-import { hash } from 'argon2'
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./schemas/user.schema";
@@ -19,13 +19,16 @@ export class UsersService {
 	async create(data: CreateUserDto) {
 		const createdUser = await this.userModel.create({
 			...data,
-			password: await hash(data.password)
+			password: await hash(data.password),
 		});
 		return createdUser;
 	}
 
 	async findAll() {
-		return await this.userModel.find({}, 'username email').exec()
+		return await this.userModel
+			.find({}, "username email")
+			.populate("tasks")
+			.exec();
 	}
 
 	async findOne(id: string) {
@@ -38,8 +41,7 @@ export class UsersService {
 
 	async update(id: string, data: UpdateUserDto) {
 		try {
-			const user = await this.userModel.updateOne({ _id: id }, data).exec();
-			return user;
+			await this.userModel.updateOne({ _id: id }, data).exec();
 		} catch (err) {
 			throw new BadRequestException("Cannot update user!");
 		}

@@ -92,14 +92,14 @@ export class UsersController {
 		status: 200,
 		schema: {
 			example: {
-				username: "aaa",
-				email: "mail@mail.com",
+				status: "ok",
 			},
 		},
 	})
 	@Patch(":id")
 	update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
-		return this.usersService.update(id, updateUserDto);
+		this.usersService.update(id, updateUserDto);
+		return { status: "ok" };
 	}
 
 	@ApiOperation({
