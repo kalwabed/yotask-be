@@ -61,6 +61,7 @@ export class TasksService {
 			return await this.taskModel
 				.find({ user: userId })
 				.populate("user", "username")
+				.sort({ createdAt: "desc" })
 				.exec();
 		} catch {
 			throw new ForbiddenException("User is not avaialble!");
