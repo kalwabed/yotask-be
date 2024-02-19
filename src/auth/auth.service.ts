@@ -33,6 +33,12 @@ export class AuthService {
 	}
 
 	async register(data: { username: string; email: string; password: string }) {
+		const existingUser = await this.usersService.findByUsername(data.username);
+
+		if (existingUser) {
+			throw new BadRequestException("Username is already registered!");
+		}
+
 		const user = await this.usersService.create(data);
 		return await this.login({ username: user.username, _id: user.id });
 	}
