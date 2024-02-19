@@ -6,6 +6,7 @@ import {
 	Param,
 	Patch,
 	Post,
+	Request,
 	UseGuards,
 } from "@nestjs/common";
 import {
@@ -14,6 +15,8 @@ import {
 	ApiResponse,
 	ApiTags,
 } from "@nestjs/swagger";
+import { Request as ExRequest } from "express";
+import { AuthService } from "src/auth/auth.service";
 import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
 import { CreateTaskDto } from "./dto/create-task.dto";
 import { UpdateTaskDto } from "./dto/update-task.dto";
@@ -24,7 +27,10 @@ import { TasksService } from "./tasks.service";
 @UseGuards(JwtAuthGuard)
 @Controller("tasks")
 export class TasksController {
-	constructor(private readonly tasksService: TasksService) {}
+	constructor(
+		private readonly tasksService: TasksService,
+		private readonly authService: AuthService,
+	) {}
 
 	@ApiOperation({
 		summary: "Add new task",
@@ -34,7 +40,7 @@ export class TasksController {
 		description: "The task has been successfully created.",
 		schema: {
 			example: {
-				_id: '65cf2b1bc443435778f302aa',
+				_id: "65cf2b1bc443435778f302aa",
 				title: "aaa",
 				desc: "haloo",
 				priority: true,
@@ -43,8 +49,12 @@ export class TasksController {
 		},
 	})
 	@Post()
-	create(@Body() createTaskDto: CreateTaskDto) {
-		return this.tasksService.create(createTaskDto);
+	create(@Body() body: CreateTaskDto, @Request() req: ExRequest) {
+		const [, token] = req.headers.authorization.split(" ");
+
+		// sub is user id
+		const jwt: { sub: string } = this.authService.decodeJwt(token);
+		return this.tasksService.create({ ...body, user: jwt.sub });
 	}
 
 	@ApiOperation({
@@ -56,15 +66,15 @@ export class TasksController {
 		schema: {
 			example: [
 				{
-					_id: '65cf2b1bc443435778f302aa',
+					_id: "65cf2b1bc443435778f302aa",
 					title: "aaa",
 					desc: "haloo",
 					priority: true,
 					status: "pending",
 					user: {
-						_id: '65cf2b1bc443435778f302aa',
-						username: 'abc'
-					}
+						_id: "65cf2b1bc443435778f302aa",
+						username: "abc",
+					},
 				},
 			],
 		},
@@ -81,7 +91,7 @@ export class TasksController {
 		status: 200,
 		schema: {
 			example: {
-				_id: '65cf2b1bc443435778f302aa',
+				_id: "65cf2b1bc443435778f302aa",
 				username: "aaa",
 				email: "mail@mail.com",
 			},
@@ -124,5 +134,32 @@ export class TasksController {
 	remove(@Param("id") id: string) {
 		this.tasksService.remove(id);
 		return { status: "ok" };
+	}
+
+	@ApiOperation({
+		summary: "Retrive list of tasks by user",
+	})
+	@ApiResponse({
+		description: "List of available tasks.",
+		status: 200,
+		schema: {
+			example: [
+				{
+					_id: "65cf2b1bc443435778f302aa",
+					title: "aaa",
+					desc: "haloo",
+					priority: true,
+					status: "pending",
+					user: {
+						_id: "65cf2b1bc443435778f302aa",
+						username: "abc",
+					},
+				},
+			],
+		},
+	})
+	@Get("user/:userId")
+	findByUser(@Param("userId") userId: string) {
+		return this.tasksService.findTasksByUser(userId);
 	}
 }

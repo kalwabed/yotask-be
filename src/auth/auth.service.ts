@@ -36,4 +36,12 @@ export class AuthService {
 		const user = await this.usersService.create(data);
 		return await this.login({ username: user.username, _id: user.id });
 	}
+
+	decodeJwt(token: string) {
+		if (!token) {
+			return "";
+		}
+
+		return this.jwtService.decode(token);
+	}
 }

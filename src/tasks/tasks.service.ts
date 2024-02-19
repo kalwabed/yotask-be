@@ -1,5 +1,6 @@
 import {
 	BadRequestException,
+	ForbiddenException,
 	Injectable,
 	NotFoundException,
 } from "@nestjs/common";
@@ -26,7 +27,7 @@ export class TasksService {
 	}
 
 	async findAll() {
-		return await this.taskModel.find().populate("user", 'username').exec();
+		return await this.taskModel.find().populate("user", "username").exec();
 	}
 
 	async findOne(id: string) {
@@ -52,6 +53,17 @@ export class TasksService {
 			await this.taskModel.findByIdAndDelete(id);
 		} catch (err) {
 			throw new BadRequestException("Task is already deleted!");
+		}
+	}
+
+	async findTasksByUser(userId: string) {
+		try {
+			return await this.taskModel
+				.find({ user: userId })
+				.populate("user", "username")
+				.exec();
+		} catch {
+			throw new ForbiddenException("User is not avaialble!");
 		}
 	}
 }

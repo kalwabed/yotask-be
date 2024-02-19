@@ -15,7 +15,7 @@ export class Task {
 	priority: boolean;
 
 	@Prop()
-	status: "pending" | "completed";
+	status: "pending" | "progress" | "completed";
 
 	@Prop({ ref: "User" })
 	user: mSchema.Types.ObjectId;
