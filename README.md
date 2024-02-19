@@ -1,6 +1,6 @@
 # YoTask Backend
 
-This project is a Nest.js application providing REST API for to consume.
+This project is a Nest.js application providing REST API for consumption. A backend for [yotask-fe](https://github.com/kalwabed/yotask-fe).
 
 ## Tech Stack
 
@@ -31,11 +31,12 @@ Copy the `.env.example` file to a new file with the name `.env`:
 cp .env.example .env
 ```
 
-Then, make sure you already have a MongoDB instance (cloud or locally) and fill in the connection uri appropriately:
+Then, make sure you already have a MongoDB instance (cloud or locally) and fill in the connection URI appropriately:
 
 ```env
 # .env
 MONGO_URL=
+PORT=
 ```
 
 Finally, run the development server.
@@ -44,11 +45,11 @@ Finally, run the development server.
 pnpm start:dev
 ```
 
-Open [localhost:8000/swagger](http:localhost:8000/swagger) with your browser to see the Swagger.
+Open [localhost:8000/docs](http://localhost:8000/docs) with your browser to see the Swagger.
 
 ## Deployment
 
-For deployment, we can use service like AWS or Railway.
+For deployment, we can use services like AWS or Railway.
 
 ## Learn More
 
